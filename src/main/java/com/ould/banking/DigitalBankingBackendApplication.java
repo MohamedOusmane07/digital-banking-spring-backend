@@ -3,9 +3,11 @@ package com.ould.banking;
 import com.ould.banking.entities.*;
 import com.ould.banking.enums.AccountStatus;
 import com.ould.banking.enums.OperationType;
+import com.ould.banking.exceptions.CustomerNotFoundException;
 import com.ould.banking.repositories.AccountOperationRepository;
 import com.ould.banking.repositories.BankAccountRepository;
 import com.ould.banking.repositories.CustomerRepository;
+import com.ould.banking.services.BankAccountService;
 import com.ould.banking.services.BankService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,7 +27,7 @@ public class DigitalBankingBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(DigitalBankingBackendApplication.class, args);
     }
-   // @Bean
+    //@Bean
     CommandLineRunner start(CustomerRepository customerRepository, AccountOperationRepository accountOperationRepository, BankAccountRepository bankAccountRepository){
 
         return args -> {
@@ -83,9 +85,27 @@ public class DigitalBankingBackendApplication {
         };
     }
     @Bean
-    CommandLineRunner commandLineRunner(BankAccountRepository bankAccountRepository, AccountOperationRepository accountOperationRepository, CustomerRepository customerRepository, BankService bankService){
+    CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
+
         return args -> {
-            bankService.consulter();
+            Stream.of("Ousmane Ibrahim","Ousmane Nasroune","Ousmane Mohamed").forEach(name->{
+                Customer customer=new Customer();
+                List<String> names= List.of(name.split(" "));
+                customer.setLastName(names.get(0));
+                customer.setFirstName(names.get(1));
+                customer.setEmail(names.get(1).toLowerCase()+"@gmail.com");
+                bankAccountService.saveCustomer(customer);
+            });
+
+            bankAccountService.listCustomers().forEach(customer -> {
+                try {
+                    bankAccountService.saveCurrentAccount(Math.random()*90000, 9000, customer.getId());
+                    bankAccountService.saveSavingAccount(Math.random()*120000, 5.5,customer.getId());
+
+                } catch (CustomerNotFoundException e) {
+                    e.printStackTrace();
+                }
+            });
 
         };
     }
