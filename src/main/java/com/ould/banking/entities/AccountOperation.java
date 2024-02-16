@@ -15,8 +15,8 @@ public class AccountOperation {
     private Date operationDate;
     private double amount;
     @Enumerated(EnumType.STRING)
-    private String motif;
     private OperationType operationType;
+    private String motif;
     @ManyToOne
     private BankAccount bankAccount;
 }

@@ -10,18 +10,17 @@ import com.ould.banking.exceptions.CustomerNotFoundException;
 
 import java.util.List;
 
-public interface BankAccountService {
-
-    SavingAccount saveSavingAccount(double initialBalance, double interestRate, Long customerId) throws CustomerNotFoundException;
-    CurrentAccount saveCurrentAccount(double initialBalance, double overDraft, Long customerId) throws CustomerNotFoundException;
-    BankAccount getBankAccount(String accountId) throws BankAccountNotFoundException;
-
-
-    List<BankAccount> bankAccountList();
+public interface CustomerService {
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
+    List<CustomerDTO> listCustomers();
 
 
 
 
 
+    CustomerDTO getCustomerById(Long customerId) throws CustomerNotFoundException;
 
+    CustomerDTO updateCustomer(CustomerDTO customerDTO) throws CustomerNotFoundException ;
+
+    void deleteCustomer(Long customerId) throws CustomerNotFoundException;
 }
