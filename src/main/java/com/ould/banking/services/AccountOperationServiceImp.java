@@ -1,5 +1,6 @@
 package com.ould.banking.services;
 
+import com.ould.banking.dtos.AccountHistoryDTO;
 import com.ould.banking.dtos.AccountOperationDTO;
 import com.ould.banking.entities.AccountOperation;
 import com.ould.banking.entities.BankAccount;
@@ -13,6 +14,8 @@ import com.ould.banking.repositories.AccountOperationRepository;
 import com.ould.banking.repositories.BankAccountRepository;
 import com.ould.banking.repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -79,5 +82,23 @@ public class AccountOperationServiceImp implements AccountOperationService{
                 .map(accountOperation -> operationMapperImp.fromAccountOperation(accountOperation))
                 .collect(Collectors.toList());
 
+    }
+
+    @Override
+    public AccountHistoryDTO getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException {
+        BankAccount bankAccount=bankAccountRepository.findById(accountId).orElse(null);
+        if (bankAccount==null) throw new BankAccountNotFoundException("Account not found");
+        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(accountId, PageRequest.of(page, size));
+        AccountHistoryDTO accountHistoryDTO=new AccountHistoryDTO();
+        List<AccountOperationDTO> accountOperationDTOS = accountOperations.getContent().stream().map(op -> operationMapperImp.fromAccountOperation(op)).collect(Collectors.toList());
+        accountHistoryDTO.setAccountOperationDTOS(accountOperationDTOS);
+        accountHistoryDTO.setAccountId(bankAccount.getId());
+        accountHistoryDTO.setBalance(bankAccount.getBalance());
+        accountHistoryDTO.setPageSize(size);
+        accountHistoryDTO.setCurrentPage(page);
+        accountHistoryDTO.setTotalPages(accountOperations.getTotalPages());
+        
+
+        return accountHistoryDTO ;
     }
 }
