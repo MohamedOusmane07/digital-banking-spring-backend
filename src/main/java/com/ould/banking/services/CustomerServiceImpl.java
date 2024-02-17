@@ -24,16 +24,16 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepository customerRepository;
     private AccountOperationRepository accountOperationRepository;
     private BankAccountRepository bankAccountRepository;
-    private CustomerMapperImp customerDtoMapper;
+    private CustomerMapperImp customerMapper;
     private BankAccountService bankAccountService;
     //Logger log=LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
     public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
         log.info("Saving new customer");
-        Customer customer= customerDtoMapper.fromCustomerDTO(customerDTO);
+        Customer customer= customerMapper.fromCustomerDTO(customerDTO);
         Customer savedCustomer=customerRepository.save(customer);
-        return customerDtoMapper.fromCustomer(savedCustomer);
+        return customerMapper.fromCustomer(savedCustomer);
     }
 
 
@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerDTO> listCustomers() {
         List<Customer> customerList=customerRepository.findAll();
         List<CustomerDTO> customerDTOList=customerList.stream()
-                .map(customer -> customerDtoMapper.fromCustomer(customer))
+                .map(customer -> customerMapper.fromCustomer(customer))
                 .collect(Collectors.toList());
         /*
         List<CustomerDTO> customerDTOList=new ArrayList<>();
@@ -61,19 +61,19 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO getCustomerById(Long customerId) throws CustomerNotFoundException {
         Customer customer=customerRepository.findById(customerId).orElseThrow(()->new CustomerNotFoundException("Customer not Found"));
-        return customerDtoMapper.fromCustomer(customer);
+        return customerMapper.fromCustomer(customer);
     }
 
     @Override
     public CustomerDTO updateCustomer(CustomerDTO customerDTO) throws CustomerNotFoundException {
         log.info("Saving new customer");
         //CustomerDTO customerDTO1=getCustomerById(customerId);
-        Customer customer= customerDtoMapper.fromCustomerDTO(customerDTO);
+        Customer customer= customerMapper.fromCustomerDTO(customerDTO);
         if (customer==null){
             throw new CustomerNotFoundException("Customer not Found");
         }
         Customer savedCustomer=customerRepository.save(customer);
-        return customerDtoMapper.fromCustomer(savedCustomer);
+        return customerMapper.fromCustomer(savedCustomer);
     }
 
     @Override
