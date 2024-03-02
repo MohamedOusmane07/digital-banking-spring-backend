@@ -64,6 +64,7 @@ public class AccountOperationServiceImp implements AccountOperationService{
         accountOperation.setAmount(amount);
         accountOperation.setBankAccount(bankAccount);
         accountOperationRepository.save(accountOperation);
+
         bankAccount.setBalance(bankAccount.getBalance()+amount);
         bankAccountRepository.save(bankAccount);
 
@@ -71,9 +72,10 @@ public class AccountOperationServiceImp implements AccountOperationService{
     }
 
     @Override
-    public void transfert(String accountIdExp, String accountIdDest, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException {
-        debit(accountIdExp,amount,"Transfer to"+accountIdDest);
-        credit(accountIdDest,amount,"Transfer from"+accountIdExp) ;
+    public void transfert(String accountIdExp, String accountIdDest, double amount,String motif) throws BankAccountNotFoundException, BalanceNotSufficientException {
+        debit(accountIdExp,amount,motif);
+        //System.out.println("Succes Debit "+amount);
+        credit(accountIdDest,amount,motif);
     }
     @Override
     public List<AccountOperationDTO> accountHistory(String accountId){
@@ -88,7 +90,7 @@ public class AccountOperationServiceImp implements AccountOperationService{
     public AccountHistoryDTO getAccountHistory(String accountId, int page, int size) throws BankAccountNotFoundException {
         BankAccount bankAccount=bankAccountRepository.findById(accountId).orElse(null);
         if (bankAccount==null) throw new BankAccountNotFoundException("Account not found");
-        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountId(accountId, PageRequest.of(page, size));
+        Page<AccountOperation> accountOperations = accountOperationRepository.findByBankAccountIdOrderByOperationDateDesc(accountId, PageRequest.of(page, size));
         AccountHistoryDTO accountHistoryDTO=new AccountHistoryDTO();
         List<AccountOperationDTO> accountOperationDTOS = accountOperations.getContent().stream().map(op -> operationMapperImp.fromAccountOperation(op)).collect(Collectors.toList());
         accountHistoryDTO.setAccountOperationDTOS(accountOperationDTOS);

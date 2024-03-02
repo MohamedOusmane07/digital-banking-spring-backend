@@ -76,10 +76,19 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.fromCustomer(savedCustomer);
     }
 
+
+
     @Override
     public void deleteCustomer(Long customerId) throws CustomerNotFoundException {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
         customerRepository.deleteById(customerId);
+    }
+
+    @Override
+    public List<CustomerDTO> searchCustomer(String keyword) {
+        List<Customer> customers=customerRepository.searchCustomer(keyword);
+        return customers.stream().map(customer -> customerMapper.fromCustomer(customer)).collect(Collectors.toList());
+
     }
 }

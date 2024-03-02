@@ -2,6 +2,7 @@ package com.ould.banking.services;
 
 import com.ould.banking.dtos.BankAccountDTO;
 import com.ould.banking.dtos.CurrentAccountDTO;
+import com.ould.banking.dtos.CustomerDTO;
 import com.ould.banking.dtos.SavingAccountDTO;
 import com.ould.banking.entities.BankAccount;
 import com.ould.banking.entities.CurrentAccount;
@@ -90,17 +91,62 @@ public class BankAccountServiceImp implements BankAccountService {
     }
 
     @Override
+    public List<BankAccountDTO> customerBankAccountsList(Long id) {
+
+        List<BankAccount> bankAccountList=bankAccountRepository.findBankAccountByCustomerId(id);
+
+        return getBankAccountDTOList(bankAccountList);
+    }
+
+    public List<BankAccountDTO> getBankAccountDTOList(List<BankAccount> bankAccountList) {
+        List<BankAccountDTO> bankAccountDTOList=bankAccountList.stream().map(bankAccount -> {
+            if (bankAccount instanceof SavingAccount){
+                SavingAccount savingAccount= (SavingAccount) bankAccount;
+                return bankAccountMapper.fromSavingAccount(savingAccount);
+            }else
+            {
+                CurrentAccount currentAccount= (CurrentAccount) bankAccount;
+                return bankAccountMapper.fromCurrentAccount(currentAccount);
+            }
+        }).collect(Collectors.toList());
+        return bankAccountDTOList;
+    }
+
+    @Override
     public List<BankAccountDTO> bankAccountList(){
        List<BankAccount> bankAccounts=bankAccountRepository.findAll();
-       List<BankAccountDTO> bankAccountDTOS=bankAccounts.stream().map(bankAccount -> {
-           if (bankAccount instanceof SavingAccount){
-               SavingAccount savingAccount=(SavingAccount) bankAccount;
-               return bankAccountMapper.fromSavingAccount(savingAccount);
-           } else {
-               CurrentAccount currentAccount=(CurrentAccount) bankAccount;
-               return bankAccountMapper.fromCurrentAccount(currentAccount);
-           }
-       }).collect(Collectors.toList());
-       return bankAccountDTOS;
+        return getBankAccountDTOList(bankAccounts);
     }
+
+    /*
+    public SavingAccountDTO saveSavingAccount(Long customerId,SavingAccountDTO savingAccountDTO) throws CustomerNotFoundException {
+        Customer customer=customerRepository.findById(customerId).orElseThrow(()-> new CustomerNotFoundException("Customer not Found"));
+
+        savingAccountDTO.setCustomerDTO(c);
+        SavingAccount savingAccount=new SavingAccount();
+        savingAccount=bankAccountMapper.fromSavingAccountDTO(savingAccountDTO);
+        bankAccountRepository.save(savingAccount);
+        return savingAccountDTO;
+    }
+
+    @Override
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) throws CustomerNotFoundException {
+        log.info("Saving new customer");
+        //CustomerDTO customerDTO1=getCustomerById(customerId);
+        Customer customer= customerMapper.fromCustomerDTO(customerDTO);
+        if (customer==null){
+            throw new CustomerNotFoundException("Customer not Found");
+        }
+        Customer savedCustomer=customerRepository.save(customer);
+        return customerMapper.fromCustomer(savedCustomer);
+    }
+    @Override
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
+        log.info("Saving new customer");
+        Customer customer= customerMapper.fromCustomerDTO(customerDTO);
+        Customer savedCustomer=customerRepository.save(customer);
+        return customerMapper.fromCustomer(savedCustomer);
+    }
+
+     */
 }

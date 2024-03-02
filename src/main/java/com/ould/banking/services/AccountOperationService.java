@@ -11,7 +11,7 @@ public interface AccountOperationService {
 
     void debit(String accountId, double amount, String motif) throws BankAccountNotFoundException, BalanceNotSufficientException;
     void credit(String accountId, double amount, String motif) throws BankAccountNotFoundException;
-    void transfert(String accountIdExp, String accountIdDest, double amount) throws BankAccountNotFoundException, BalanceNotSufficientException;
+    void transfert(String accountIdExp, String accountIdDest, double amount,String motif) throws BankAccountNotFoundException, BalanceNotSufficientException;
 
     List<AccountOperationDTO> accountHistory(String accountId);
 

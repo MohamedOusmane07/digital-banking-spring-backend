@@ -12,12 +12,20 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class CustomerRestController {
     private CustomerService customerService;
+
     @GetMapping("/customers")
     public List<CustomerDTO> customerList(){
         return customerService.listCustomers();
     }
+
+    @GetMapping("/customers/search")
+    public List<CustomerDTO> searchCustomer(@RequestParam(name="keyword", defaultValue = "") String keyword){
+        return customerService.searchCustomer("%"+keyword+"%");
+    }
+
     @GetMapping("/customers/{id}")
     public CustomerDTO getCustomer(@PathVariable(name = "id") Long customerId) throws CustomerNotFoundException {
         return customerService.getCustomerById(customerId);
@@ -33,8 +41,8 @@ public class CustomerRestController {
         customerDTO.setId(customerId);
         return customerService.updateCustomer(customerDTO);
     }
-    @DeleteMapping("/customers/{id}")
-    public void deleteCustomer(@PathVariable Long id) throws CustomerNotFoundException {
-        customerService.deleteCustomer(id);
+    @DeleteMapping("/customers/{customerId}")
+    public void deleteCustomer(@PathVariable Long customerId) throws CustomerNotFoundException {
+        customerService.deleteCustomer(customerId);
     }
 }
