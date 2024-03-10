@@ -1,13 +1,13 @@
 package com.ould.banking.dtos;
 
-
 import com.ould.banking.enums.AccountStatus;
-import lombok.Data;
-
+import lombok.*;
 import java.time.LocalDate;
 
-@Data
-public class CurrentAccountDTO extends BankAccountDTO{
+@Getter @Setter @Builder @ToString
+@AllArgsConstructor @NoArgsConstructor
+public class CurrentAccountDTO extends BankAccountDTO {
+
 
     private String id;
     private double balance;
@@ -17,5 +17,6 @@ public class CurrentAccountDTO extends BankAccountDTO{
     private AccountStatus status;
     private CustomerDTO customerDTO;
     private double overDraft;
+
 
 }

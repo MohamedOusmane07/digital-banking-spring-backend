@@ -33,6 +33,7 @@ public class BankAccountMapperImp {
         CurrentAccountDTO currentAccountDTO=new CurrentAccountDTO();
         BeanUtils.copyProperties(currentAccount,currentAccountDTO);
         currentAccountDTO.setCustomerDTO(customerMapperImp.fromCustomer(currentAccount.getCustomer()));
+
         currentAccountDTO.setType(currentAccount.getClass().getSimpleName());
         return currentAccountDTO;
         

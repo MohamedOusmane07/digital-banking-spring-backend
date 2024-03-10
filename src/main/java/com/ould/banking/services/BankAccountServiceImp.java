@@ -33,41 +33,45 @@ public class BankAccountServiceImp implements BankAccountService {
     private BankAccountMapperImp bankAccountMapper;
 
     @Override
-    public SavingAccountDTO saveSavingAccount(double initialBalance, double interestRate, Long customerId,String devise) throws CustomerNotFoundException {
-        Customer customer= customerRepository.findById(customerId).orElse(null);
+    public SavingAccountDTO saveSavingAccount(SavingAccountDTO savingAccountDTO) throws CustomerNotFoundException {
+        Customer customer= customerRepository.findById(savingAccountDTO.getCustomerDTO().getId()).orElse(null);
         if (customer==null){
             throw new CustomerNotFoundException("Customer not found");
         }
-        SavingAccount savingAccount= new SavingAccount();
+        SavingAccount savingAccount=bankAccountMapper.fromSavingAccountDTO(savingAccountDTO);
         savingAccount.setId(UUID.randomUUID().toString());
         savingAccount.setDateCreation(LocalDate.now());
         savingAccount.setDateExpiration(LocalDate.now().plusYears(4));
-        savingAccount.setBalance(initialBalance);
-        savingAccount.setInterestRate(interestRate);
+        savingAccount.setBalance(savingAccountDTO.getBalance());
+        savingAccount.setInterestRate(savingAccountDTO.getInterestRate());
         savingAccount.setCustomer(customer);
         savingAccount.setStatus(AccountStatus.CREATED);
-        savingAccount.setCurrency(devise);
-        SavingAccount savedBankAccount=bankAccountRepository.save(savingAccount);
+        savingAccount.setCurrency(savingAccountDTO.getCurrency());
 
+        SavingAccount savedBankAccount=bankAccountRepository.save(savingAccount);
         return bankAccountMapper.fromSavingAccount(savedBankAccount);
     }
 
 
     @Override
-    public CurrentAccountDTO saveCurrentAccount(double initialBalance, double overDraft, Long customerId,String devise) throws CustomerNotFoundException {
-        Customer customer=customerRepository.findById(customerId).orElse(null);
+    public CurrentAccountDTO saveCurrentAccount(CurrentAccountDTO currentAccountDTO) throws CustomerNotFoundException {
+        Customer customer=customerRepository.findById(currentAccountDTO.getCustomerDTO().getId()).orElse(null);
         if (customer==null){
             throw new CustomerNotFoundException("Customer not found");
         }
-        CurrentAccount currentAccount=new CurrentAccount();
+        //Customer customer= customerMapper.fromCustomerDTO(customerDTO);
+        //Customer savedCustomer=customerRepository.save(customer);
+        CurrentAccount currentAccount=bankAccountMapper.fromCurrentAccountDTO(currentAccountDTO);
+        //CurrentAccount currentAccount=new CurrentAccount();
         currentAccount.setId(UUID.randomUUID().toString());
-        currentAccount.setBalance(initialBalance);
+        currentAccount.setBalance(currentAccountDTO.getBalance());
         currentAccount.setDateCreation(LocalDate.now());
         currentAccount.setDateExpiration(LocalDate.now().plusYears(4));
-        currentAccount.setOverDraft(overDraft);
+        currentAccount.setOverDraft(currentAccountDTO.getOverDraft());
         currentAccount.setCustomer(customer);
-        currentAccount.setCurrency(devise);
+        currentAccount.setCurrency(currentAccountDTO.getCurrency());
         currentAccount.setStatus(AccountStatus.CREATED);
+
 
         CurrentAccount savedBankAccount= bankAccountRepository.save(currentAccount);
         return bankAccountMapper.fromCurrentAccount(savedBankAccount);

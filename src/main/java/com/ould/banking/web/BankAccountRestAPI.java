@@ -2,6 +2,7 @@ package com.ould.banking.web;
 
 import com.ould.banking.dtos.BankAccountDTO;
 import com.ould.banking.dtos.CurrentAccountDTO;
+import com.ould.banking.dtos.SavingAccountDTO;
 import com.ould.banking.exceptions.BankAccountNotFoundException;
 import com.ould.banking.exceptions.CustomerNotFoundException;
 import com.ould.banking.services.BankAccountService;
@@ -30,13 +31,14 @@ public class BankAccountRestAPI {
         return bankAccountService.bankAccountList();
     }
 
-    @PostMapping("/currentAccount")
-    public CurrentAccountDTO saveCurrentAccount( @RequestBody  Double initialBalance,
-                                                 @RequestBody  Double overDraft,
-                                                 @RequestBody Long customerId,
-                                                 @RequestBody  String devise) throws CustomerNotFoundException {
-        return bankAccountService.saveCurrentAccount(initialBalance,overDraft,customerId,devise);
+    @PostMapping("/currentAccount/add")
+    public CurrentAccountDTO saveCurrentAccount( @RequestBody CurrentAccountDTO currentAccountDTO) throws CustomerNotFoundException {
+        return bankAccountService.saveCurrentAccount(currentAccountDTO);
 
+    }
+    @PostMapping("/savingAccount/add")
+    public SavingAccountDTO saveSavingAccount(@RequestBody SavingAccountDTO savingAccountDTO) throws CustomerNotFoundException {
+        return bankAccountService.saveSavingAccount(savingAccountDTO);
     }
 
     @GetMapping("accounts/customer/{customerId}")

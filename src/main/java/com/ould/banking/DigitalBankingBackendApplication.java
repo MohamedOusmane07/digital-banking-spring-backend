@@ -104,10 +104,20 @@ public class DigitalBankingBackendApplication {
                 customerService.saveCustomer(customer);
             });
 
+
+
             customerService.listCustomers().forEach(customer -> {
                 try {
-                    bankAccountService.saveCurrentAccount(Math.random()*90000, 9000, customer.getId(),"DH");
-                    bankAccountService.saveSavingAccount(Math.random()*120000, 5.4,customer.getId(),"DH");
+                  CurrentAccountDTO currentAccountDTO=CurrentAccountDTO
+                          .builder()
+                          .overDraft(3)
+                          .balance(Math.random()*123455+1000)
+                          .currency("DHH")
+                          .customerDTO(customer)
+                          .build();
+
+                    bankAccountService.saveCurrentAccount(currentAccountDTO);
+                    //bankAccountService.saveSavingAccount(Math.random()*120000, 5.4,customer.getId(),"DH");
 
 
                 } catch (CustomerNotFoundException e) {
@@ -128,6 +138,8 @@ public class DigitalBankingBackendApplication {
                     accountOperationService.debit(accountId,1000+Math.random()*9000,"Debit");
                 }
             }
+
+
 
 
 
