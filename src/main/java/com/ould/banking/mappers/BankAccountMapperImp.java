@@ -1,5 +1,6 @@
 package com.ould.banking.mappers;
 
+import com.ould.banking.dtos.AddCurrentAccountDTO;
 import com.ould.banking.dtos.CurrentAccountDTO;
 import com.ould.banking.dtos.SavingAccountDTO;
 import com.ould.banking.entities.CurrentAccount;
@@ -36,13 +37,19 @@ public class BankAccountMapperImp {
 
         currentAccountDTO.setType(currentAccount.getClass().getSimpleName());
         return currentAccountDTO;
-        
+
+    }
+    public CurrentAccountDTO fromAddCurrentAccountDTO(AddCurrentAccountDTO addCurrentAccountDTO){
+        CurrentAccountDTO currentAccountDTO=new CurrentAccountDTO();
+        BeanUtils.copyProperties(addCurrentAccountDTO,currentAccountDTO);
+        //currentAccountDTO.setCustomerDTO(customerMapperImp.fromCustomer(addCurrentAccountDTO.));
+        return currentAccountDTO;
     }
     
     
     public CurrentAccount fromCurrentAccountDTO(CurrentAccountDTO currentAccountDTO){
-        CurrentAccount currentAccount= new CurrentAccount();
-        BeanUtils.copyProperties(currentAccountDTO,currentAccount);
+        CurrentAccount currentAccount = new CurrentAccount();
+        BeanUtils.copyProperties(currentAccountDTO, currentAccount);
         currentAccount.setCustomer(customerMapperImp.fromCustomerDTO(currentAccountDTO.getCustomerDTO()));
         return currentAccount;
 

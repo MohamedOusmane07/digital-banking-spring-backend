@@ -22,7 +22,7 @@ public class CustomerRestController {
     }
 
     @GetMapping("/customers/search")
-    public List<CustomerDTO> searchCustomer(@RequestParam(name="keyword", defaultValue = "") String keyword){
+    public List<CustomerDTO> searchCustomer(@RequestParam(name="keyword", defaultValue ="") String keyword){
         return customerService.searchCustomer("%"+keyword+"%");
     }
 

@@ -12,5 +12,5 @@ public interface CustomerRepository extends JpaRepository<Customer ,Long> {
 
     //List<Customer> findByFirstNameContains(String keyword);
     @Query("select cust from Customer as cust where cust.firstName like :kw")
-    List<Customer> searchCustomer(@Param( "kw") String keyword);
+    List<Customer> searchCustomer(@Param("kw") String keyword);
 }

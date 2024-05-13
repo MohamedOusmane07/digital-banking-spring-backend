@@ -1,14 +1,9 @@
 package com.ould.banking;
 
-import com.ould.banking.dtos.BankAccountDTO;
-import com.ould.banking.dtos.CurrentAccountDTO;
-import com.ould.banking.dtos.CustomerDTO;
-import com.ould.banking.dtos.SavingAccountDTO;
+import com.ould.banking.dtos.*;
 import com.ould.banking.entities.*;
 import com.ould.banking.enums.AccountStatus;
 import com.ould.banking.enums.OperationType;
-import com.ould.banking.exceptions.BalanceNotSufficientException;
-import com.ould.banking.exceptions.BankAccountNotFoundException;
 import com.ould.banking.exceptions.CustomerNotFoundException;
 import com.ould.banking.repositories.AccountOperationRepository;
 import com.ould.banking.repositories.BankAccountRepository;
@@ -108,15 +103,23 @@ public class DigitalBankingBackendApplication {
 
             customerService.listCustomers().forEach(customer -> {
                 try {
-                  CurrentAccountDTO currentAccountDTO=CurrentAccountDTO
+                  AddCurrentAccountDTO addcurrentAccountDTO=AddCurrentAccountDTO
                           .builder()
-                          .overDraft(3)
+                          .overDraft(100030)
                           .balance(Math.random()*123455+1000)
-                          .currency("DHH")
+                          .currency("DH")
                           .customerDTO(customer)
                           .build();
+                    bankAccountService.saveCurrentAccount(addcurrentAccountDTO);
 
-                    bankAccountService.saveCurrentAccount(currentAccountDTO);
+                    SavingAccountDTO savingAccountDTO=SavingAccountDTO
+                            .builder()
+                            .interestRate(4)
+                            .currency("DH")
+                            .customerDTO(customer)
+                            .balance(Math.random()*123456+3560)
+                            .build();
+                    bankAccountService.saveSavingAccount(savingAccountDTO);
                     //bankAccountService.saveSavingAccount(Math.random()*120000, 5.4,customer.getId(),"DH");
 
 
